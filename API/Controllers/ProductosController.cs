@@ -1,4 +1,5 @@
 using Core.Entities;
+using Core.Interfaces;
 using Infraestructure.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +9,10 @@ namespace API.Controllers;
 
 public class ProductosController : BaseApiController {
 
-    private readonly TiendaContext _context;
+    private readonly IProductoRepository _productoRepository;
 
-    public ProductosController(TiendaContext context) {
-        _context = context;
+    public ProductosController(IProductoRepository productoRepository) {
+        _productoRepository = productoRepository;
     }
 
     [HttpGet]
@@ -19,7 +20,7 @@ public class ProductosController : BaseApiController {
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<IEnumerable<Producto>>> Get() {
 
-        IEnumerable<Producto> productos = await _context.Productos.ToListAsync();
+        IEnumerable<Producto> productos = await _productoRepository.GetAllAsync();
         return Ok(productos);
 
     }
@@ -32,7 +33,7 @@ public class ProductosController : BaseApiController {
 
     public async Task<ActionResult<Producto>> GetOne(int id) {
 
-        Producto producto = await _context.Productos.FindAsync(id);
+        Producto producto = await _productoRepository.GetByIdAsync(id);
         return Ok(producto);
 
     }
